@@ -82,7 +82,7 @@ extension HashTable {
   /// - Complexity: O(1) expected, worst case O(*n*), where *n* is the size of
   ///   the hash table.
   @discardableResult
-  mutating func insert(key: Key, element: Element) -> Int? {
+  mutating func insert(key: Key, element: Element?) -> Int? {
     let hashValue = hash(of: key)
 
     // Use open addressing: increment a hash value if a collision occurs and
@@ -113,6 +113,20 @@ extension HashTable {
 }
 
 
+extension HashTable: CustomDebugStringConvertible {
+
+  var debugDescription: String {
+    return "[" + table.enumerated()
+      .compactMap { offset, bucket in
+        guard let key = bucket.key else { return nil }
+        return "(\(offset)) \(key): \(bucket.element.debugDescription)"
+      }
+      .joined(separator: ", ")
+      + "]"
+  }
+}
+
+
 private extension HashTable {
 
   struct Bucket {
@@ -130,7 +144,7 @@ private extension HashTable {
 
 
   mutating func setElement(
-    _ element: Element,
+    _ element: Element?,
     forKey key: Key,
     at index: Int)
   {

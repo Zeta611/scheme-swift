@@ -14,3 +14,11 @@ struct Node {
   var left: Int
   var right: Int
 }
+
+
+extension Node: CustomStringConvertible {
+
+  var description: String {
+    return "(left: \(left), right: \(right))"
+  }
+}
