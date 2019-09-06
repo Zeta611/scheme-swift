@@ -57,16 +57,32 @@ extension HashTable {
   }
 
 
-  /// Inserts the pair `(key, element)` to the hash table.
+  /// Gets the key for the given `hashValue`.
+  ///
+  /// - Parameter hashValue: The hash value to find in the hash table.
+  /// - Returns: The key in the hash table with hash value equal to `hashValue`
+  ///   if it exists; otherwise, `nil`.
+  /// - Complexity: O(1)
+  func getKey(from hashValue: Int) -> Key? {
+    return table[hashValue].key
+  }
+
+
+  /// Inserts the pair `(key, element)` to the hash table, and returns the
+  /// hash value for the inserted pair in the hash table.
+  ///
+  /// If the `key` already exists in the hash table, update the previous
+  /// element associated with `key` with `element.
   ///
   /// - Parameters:
   ///   - key: The key associated with `element` to add to the hash table.
   ///   - element: The element to add to the hash table.
-  /// - Returns: `true` if insertion was successful, `false` otherwise.
+  /// - Returns: The hash value for the inserted pair if the insertion was
+  ///   successful; `nil` otherwise.
   /// - Complexity: O(1) expected, worst case O(*n*), where *n* is the size of
   ///   the hash table.
   @discardableResult
-  mutating func insert(key: Key, element: Element) -> Bool {
+  mutating func insert(key: Key, element: Element) -> Int? {
     let hashValue = hash(of: key)
 
     for i in 0..<size {
@@ -76,10 +92,13 @@ extension HashTable {
       if bucket.key == nil {
         setElement(element, forKey: key, at: index)
         count += 1
-        return true
+        return index
+      } else if bucket.key == key {
+        setElement(element, forKey: key, at: index)
+        return index
       }
     }
-    return false
+    return nil
   }
 
 
@@ -94,7 +113,7 @@ private extension HashTable {
 
   struct Bucket {
     var key: Key?
-    var element: Element!
+    var element: Element?
   }
 
 
