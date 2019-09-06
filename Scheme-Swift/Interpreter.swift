@@ -8,10 +8,10 @@
 
 import Foundation
 
-struct Interpreter {
+final class Interpreter {
 
-  private var nodeArray = NodeArray()
-  private var symbolTable = HashTable<String, Int>(size: 97)
+  private(set) var nodeArray = NodeArray()
+  private(set) var symbolTable = HashTable<String, Int>(size: 97)
 
   var input: () -> String = { readLine() ?? "" }
   var output: (String) -> Void = { Swift.print($0) }
@@ -28,7 +28,7 @@ struct Interpreter {
 
 extension Interpreter {
 
-  mutating func run(once: Bool = false) {
+  func run(once: Bool = false) {
     repeat {
       read()
       print()
@@ -39,7 +39,7 @@ extension Interpreter {
 
 private extension Interpreter {
 
-  mutating func read() {
+  func read() {
     input()
       .split { $0 == " " }
       .map { String($0) }

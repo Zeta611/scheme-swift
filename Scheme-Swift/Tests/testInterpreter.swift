@@ -15,11 +15,19 @@ func testInterpreter() {
 
 private func testInterpreterCanRead() {
   test("Interpreter can read") { assertion, completion in
-    let string = "define x 3"
-    let stubIO = StubIO(string)
-    var interpreter = Interpreter(input: stubIO.readLine, output: stubIO.print)
-    interpreter.run(once: true)
-    assertion(stubIO.output == string)
+    let strings = [
+      "(define square (lambda (x) (* x x)))",
+      "(define x 3)",
+      "(square 6)",
+    ]
+
+    let stubIO = StubIO(strings)
+    let interpreter = Interpreter(input: stubIO.readLine, output: stubIO.print)
+    for _ in 0..<strings.count {
+      interpreter.run(once: true)
+    }
+
+    assertion(stubIO.output == strings.reversed().joined(separator: " "))
     completion()
   }
 }
@@ -27,13 +35,13 @@ private func testInterpreterCanRead() {
 
 private class StubIO {
 
-  var value: String
+  var strings: [String]
   var output: String?
 
-  func readLine() -> String { return value }
+  func readLine() -> String { return strings.popLast() ?? "" }
   func print(item: String) { output = item }
 
-  init(_ value: String) {
-    self.value = value
+  init(_ strings: [String]) {
+    self.strings = strings
   }
 }
