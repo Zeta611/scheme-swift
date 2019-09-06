@@ -85,15 +85,19 @@ extension HashTable {
   mutating func insert(key: Key, element: Element) -> Int? {
     let hashValue = hash(of: key)
 
+    // Use open addressing: increment a hash value if a collision occurs and
+    // retry insertion.
     for i in 0..<size {
       let index = (hashValue + i) % size
       let bucket = table[index]
 
       if bucket.key == nil {
+        // `bucket` is empty, so add the pair to the table.
         setElement(element, forKey: key, at: index)
         count += 1
         return index
       } else if bucket.key == key {
+        // `bucket` with such `key` exists, so update `bucket` with the pair.
         setElement(element, forKey: key, at: index)
         return index
       }
