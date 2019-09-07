@@ -9,4 +9,6 @@
 import Foundation
 
 testHashTable()
+testStringStream()
+testTokenizer()
 testInterpreter()

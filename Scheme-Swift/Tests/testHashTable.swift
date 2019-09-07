@@ -9,6 +9,7 @@
 import Foundation
 
 func testHashTable() {
+  print("=== Test HashTable ===")
   testHashTableCanInsert()
   testHashTableCanGet()
   testHashTableCanCount()

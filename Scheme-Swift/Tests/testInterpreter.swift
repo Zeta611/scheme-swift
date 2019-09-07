@@ -9,6 +9,7 @@
 import Foundation
 
 func testInterpreter() {
+  print("=== Test Interpreter ===")
   testInterpreterCanRead()
 }
 
