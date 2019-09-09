@@ -11,11 +11,14 @@ import Foundation
 final class Interpreter {
 
   var input: () -> String = { readLine() ?? "" }
-  var output: (String) -> Void = { Swift.print($0) }
+  
+  var output: (String) -> Void = {
+    Swift.print($0, separator: "", terminator: "")
+  }
 
-  private(set) var nodeArray = NodeArray()
-  private(set) var symbolTable = HashTable<String, Int>(size: 97)
-  private var tokenArray = [String]()
+  private lazy var tokenizer = Tokenizer()
+  private var nodeArray = NodeArray()
+  private var symbolTable = HashTable<String, Int>(size: 997)
 
 
   init(input: @escaping () -> String, output: @escaping (String) -> Void) {
@@ -30,11 +33,22 @@ final class Interpreter {
 extension Interpreter {
 
   func run(once: Bool = false) {
-    repeat {
+    while true {
+      if tokenizer.stream.isEmpty {
+        Swift.print("λ", terminator: " ")
+        tokenizer.stream.insert(input())
+      }
+
       preprocess()
-      read()
-      print()
-    } while !once
+      let rootNodeIndex = read()
+      print(rootNodeIndex, startList: true)
+
+      if tokenizer.stream.isAtEnd {
+        tokenizer.stream.flush()
+        Swift.print()
+        if once { break }
+      }
+    }
   }
 }
 
@@ -42,34 +56,84 @@ extension Interpreter {
 private extension Interpreter {
 
   func preprocess() {
-    tokenArray = input()
-      .split(separator: " ")
-      .map { String($0) }
-      .flatMap { (string: String) -> [String] in
-        var strings = [String]()
-        if string.contains("(") {
-          string.split(separator: "(")
-        }
-        return strings
+  }
+
+
+  /// Recursively reads tokens from a tokenizer.
+  ///
+  /// - Returns: The index of a root node for tokens between the pair of
+  /// parentheses, or the negative hash value for a single token. The index is
+  /// one-based, in order to identify a terminator with a zero.
+  func read() -> Int {
+    guard let startingToken = tokenizer.get() else { return 0 }
+
+    guard let tokenHashValue = symbolTable
+      .insert(key: startingToken.value, element: nil)
+    else { fatalError("symbolTable is full") }
+
+    // Immediately return the hash value of a non-parenthesis starting token.
+    guard startingToken.isEqual(to: Parenthesis.left)
+      else { return -tokenHashValue }
+
+    var isRootNode = true
+
+    // One-based index for the root node of a current `read` call.
+    var rootNodeIndex = 0
+
+    // One-based index that tracks current node.
+    var currentNodeIndex = 0
+
+    // Repeat adding a node until the token reaches a right parenthesis.
+    while let token = tokenizer.get(), !token.isEqual(to: Parenthesis.right) {
+      guard let tokenHashValue = symbolTable
+        .insert(key: token.value, element: nil)
+      else { fatalError("symbolTable is full") }
+
+      // Allocate a new node, and set `currentNodeIndex` as the index of it.
+      nodeArray.append(.zero)
+      if isRootNode {
+        rootNodeIndex = nodeArray.count
+        isRootNode = false
+      } else {
+        nodeArray[currentNodeIndex - 1].right = nodeArray.count
       }
+      currentNodeIndex = nodeArray.count
+
+      // If the token is a left perenthesis, recursively set `left` of the node
+      // and put it back, since `read` begins parsing from a left parenthesis;
+      // Otherwise set `left` as a negative hash value.
+      if token.isEqual(to: Parenthesis.left) {
+        tokenizer.putBack()
+        nodeArray[currentNodeIndex - 1].left = read()
+      } else {
+        nodeArray[currentNodeIndex - 1].left = -tokenHashValue
+      }
+    }
+    return rootNodeIndex
   }
 
-  func read() {
-//    input()
-//      .split { $0 == " " }
-//      .map { String($0) }
-//      .forEach {
-//        if let hashValue = symbolTable.insert(key: $0, element: nil) {
-//          nodeArray.append(Node(left: hashValue, right: 0))
-//        }
-//    }
-  }
 
+  /// Recursively prints the expression starting from the root node.
+  ///
+  /// - Parameters:
+  ///   - rootNodeIndex: The one-based index of the root node.
+  ///   - startList: A flag which indicates if the root node is at the start of
+  ///     the list.
+  func print(_ rootNodeIndex: Int, startList: Bool) {
+    if rootNodeIndex == 0 {
+      output("()")
+    } else if rootNodeIndex < 0 {
+      output(symbolTable.getKey(from: -rootNodeIndex) ?? "Unknown symbol")
+    } else if rootNodeIndex > 0 {
+      if startList { output("(") }
 
-  func print() {
-    let string = nodeArray
-      .compactMap { symbolTable.getKey(from: $0.left) }
-      .joined(separator: " ")
-    output(string)
+      print(nodeArray[rootNodeIndex - 1].left, startList: true)
+
+      if nodeArray[rootNodeIndex - 1].right != 0 {
+        print(nodeArray[rootNodeIndex - 1].right, startList: false)
+      } else {
+        output(")")
+      }
+    }
   }
 }

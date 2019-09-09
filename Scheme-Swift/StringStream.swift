@@ -12,11 +12,10 @@ import Foundation
 /// a character one-by-one easily.
 struct StringStream {
 
-  private let string: String
+  private var string: String
   private var index: String.Index?
 
-
-  init(_ string: String) {
+  init(_ string: String = "") {
     self.string = string
   }
 }
@@ -25,7 +24,12 @@ struct StringStream {
 extension StringStream {
 
   var isAtEnd: Bool {
+    guard string.startIndex < string.endIndex else { return true }
     return index == string.index(before: string.endIndex)
+  }
+
+  var isEmpty: Bool {
+    return string.isEmpty
   }
 
 
@@ -51,5 +55,16 @@ extension StringStream {
       index = string.startIndex
     }
     return string[index!]
+  }
+
+
+  mutating func flush() {
+    string.removeAll()
+    index = nil
+  }
+
+
+  mutating func insert(_ insertedString: String) {
+    string.append(insertedString)
   }
 }

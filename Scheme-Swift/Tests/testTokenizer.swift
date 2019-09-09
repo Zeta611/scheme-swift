@@ -15,6 +15,7 @@ func testTokenizer() {
   testTokenizerCanTokenizeVariables()
   testTokenizerCanTokenizeNumbers()
   testTokenizerCanTokenizeMixedTokens()
+  testTokenizerCanPutBackTokens()
 }
 
 
@@ -26,11 +27,8 @@ private func testTokenizerCanTokenizeParentheses() {
     let leftParenthesisToken = tokenizer.get()
     let rightParenthesisToken = tokenizer.get()
 
-    assertion(leftParenthesisToken?.value == "(")
-    assertion(leftParenthesisToken?.type == .parenthesis)
-
-    assertion(rightParenthesisToken?.value == ")")
-    assertion(rightParenthesisToken?.type == .parenthesis)
+    assertion(leftParenthesisToken?.isEqual(to: Parenthesis.left) == true)
+    assertion(rightParenthesisToken?.isEqual(to: Parenthesis.right) == true)
 
     assertion(tokenizer.get() == nil)
     completion()
@@ -46,8 +44,8 @@ private func testTokenizerCanTokenizeWhitespaces() {
     let tokenizer = Tokenizer(stream: stream)
 
     let whitespaceToken = tokenizer.get()
-    assertion(whitespaceToken?.value == whitespace)
-    assertion(whitespaceToken?.type == .whitespace)
+    assertion(whitespaceToken?
+      .isEqual(to: Whitespace(value: whitespace)) == true)
 
     assertion(tokenizer.get() == nil)
     completion()
@@ -63,8 +61,7 @@ private func testTokenizerCanTokenizeVariables() {
     let tokenizer = Tokenizer(stream: stream)
 
     let variableToken = tokenizer.get()
-    assertion(variableToken?.value == variable)
-    assertion(variableToken?.type == .variable)
+    assertion(variableToken?.isEqual(to: Variable(value: variable)) == true)
 
     assertion(tokenizer.get() == nil)
     completion()
@@ -80,8 +77,7 @@ private func testTokenizerCanTokenizeNumbers() {
     let tokenizer = Tokenizer(stream: stream)
 
     let numberToken = tokenizer.get()
-    assertion(numberToken?.value == number)
-    assertion(numberToken?.type == .number)
+    assertion(numberToken?.isEqual(to: Number(value: number)) == true)
 
     assertion(tokenizer.get() == nil)
     completion()
@@ -115,9 +111,63 @@ private func testTokenizerCanTokenizeMixedTokens() {
     var counter = 0
     while let token = tokenizer.get() {
       let expected = expectedTokens[counter]
-      assertion(token.type == expected.type)
-      assertion(token.value == expected.value)
+      assertion(token.isEqual(to: expected))
       counter += 1
+    }
+
+    completion()
+  }
+}
+
+
+private func testTokenizerCanPutBackTokens() {
+  test("Tokenizer can put back tokens") { assertion, completion in
+    let string = "\t (define x-4 \n(+ 3 4))"
+    let expectedTokens: [Token] = [
+      Whitespace(value: "\t "),
+      Parenthesis(value: "("),
+      Keyword(rawValue: "define")!,
+      Whitespace(value: " "),
+      Variable(value: "x-4"),
+      Whitespace(value: " \n"),
+      Parenthesis(value: "("),
+      Operator(rawValue: "+")!,
+      Whitespace(value: " "),
+      Number(value: "3"),
+      Whitespace(value: " "),
+      Number(value: "4"),
+      Parenthesis(value: ")"),
+      Parenthesis(value: ")"),
+    ]
+
+    let stream = StringStream(string)
+    let tokenizer = Tokenizer(stream: stream)
+
+    for _ in 0..<3 { _ = tokenizer.get() }
+    for _ in 0..<3 { tokenizer.putBack() }
+    for i in 0..<3 {
+      let token = tokenizer.get()
+      let expected = expectedTokens[i]
+      assertion(token?.isEqual(to: expected) == true)
+    }
+    for _ in 0..<3 { tokenizer.putBack() }
+
+    var counter = 0
+    while let token = tokenizer.get() {
+      let expected = expectedTokens[counter]
+      assertion(token.isEqual(to: expected))
+      counter += 1
+    }
+
+    tokenizer.putBack()
+    tokenizer.putBack()
+
+    if let token = tokenizer.get(),
+       let expected = expectedTokens.last
+    {
+      assertion(token.isEqual(to: expected))
+    } else {
+      assertion(false)
     }
 
     completion()

@@ -8,7 +8,10 @@
 
 import Foundation
 
-testHashTable()
-testStringStream()
-testTokenizer()
-testInterpreter()
+//testHashTable()
+//testStringStream()
+//testTokenizer()
+//testInterpreter()
+
+let interpreter = Interpreter()
+interpreter.run()

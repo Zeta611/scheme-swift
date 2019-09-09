@@ -13,6 +13,8 @@ typealias NodeArray = [Node]
 struct Node {
   var left: Int
   var right: Int
+
+  static var zero = Node(left: 0, right: 0)
 }
 
 

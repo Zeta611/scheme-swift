@@ -14,6 +14,14 @@ protocol Token {
 }
 
 
+extension Token {
+
+  func isEqual(to other: Token) -> Bool {
+    return value == other.value && type == other.type
+  }
+}
+
+
 struct Number: Token {
   var value: String
   let type = TokenType.number
@@ -49,6 +57,9 @@ enum Operator: String, CaseIterable, Token {
 struct Parenthesis: Token {
   var value: String
   let type = TokenType.parenthesis
+
+  static let left = Parenthesis(value: "(")
+  static let right = Parenthesis(value: ")")
 }
 
 

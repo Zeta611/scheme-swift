@@ -72,7 +72,9 @@ extension HashTable {
   /// hash value for the inserted pair in the hash table.
   ///
   /// If the `key` already exists in the hash table, update the previous
-  /// element associated with `key` with `element.
+  /// element associated with `key` with `element`.
+  ///
+  /// The return value is `nil` only if the hash table is full.
   ///
   /// - Parameters:
   ///   - key: The key associated with `element` to add to the hash table.

@@ -10,11 +10,12 @@ import Foundation
 
 class Tokenizer {
 
-  private var stream: StringStream
+  var stream: StringStream
+
   private var tokens = [Token]()
   private var index = -1
 
-  init(stream: StringStream) {
+  init(stream: StringStream = StringStream()) {
     self.stream = stream
   }
 }
@@ -84,7 +85,7 @@ private extension Tokenizer {
 
 
   func isWhitespace(_ c: Character) -> Bool {
-    return ["\n", "\t", " "].contains(c)
+    return c.isWhitespace
   }
 
 
