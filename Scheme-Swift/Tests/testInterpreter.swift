@@ -25,7 +25,8 @@ private func testInterpreterCanRead() {
     let stubIO = StubIO(input)
     let interpreter = Interpreter(input: stubIO.readLine, output: stubIO.print)
     interpreter.run(once: true)
-    assertion(stubIO.output == input)
+    assertion(stubIO.output.filter { !$0.isWhitespace }
+      == input.filter { !$0.isWhitespace })
     completion()
   }
 }

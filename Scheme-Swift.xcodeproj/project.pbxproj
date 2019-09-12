@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		6917481C2322620D00FCF18F /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6917481B2322620D00FCF18F /* main.swift */; };
-		6917482323226DCD00FCF18F /* NodeArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6917482223226DCD00FCF18F /* NodeArray.swift */; };
 		6917482523226DDF00FCF18F /* HashTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6917482423226DDF00FCF18F /* HashTable.swift */; };
 		69174827232270E900FCF18F /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69174826232270E900FCF18F /* test.swift */; };
 		691748292322886D00FCF18F /* testHashTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691748282322886D00FCF18F /* testHashTable.swift */; };
@@ -20,6 +19,8 @@
 		699718532323FCCB001DDE2D /* TokenType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699718522323FCCB001DDE2D /* TokenType.swift */; };
 		6997185523240359001DDE2D /* testStringStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6997185423240359001DDE2D /* testStringStream.swift */; };
 		6997185723241FBC001DDE2D /* testTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6997185623241FBC001DDE2D /* testTokenizer.swift */; };
+		69E4BD7C232AB5920006200C /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E4BD7B232AB5920006200C /* Node.swift */; };
+		69E4BD7E232AB5DC0006200C /* NodePool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E4BD7D232AB5DC0006200C /* NodePool.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,7 +38,6 @@
 /* Begin PBXFileReference section */
 		691748182322620D00FCF18F /* Scheme-Swift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Scheme-Swift"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6917481B2322620D00FCF18F /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		6917482223226DCD00FCF18F /* NodeArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeArray.swift; sourceTree = "<group>"; };
 		6917482423226DDF00FCF18F /* HashTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashTable.swift; sourceTree = "<group>"; };
 		69174826232270E900FCF18F /* test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
 		691748282322886D00FCF18F /* testHashTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testHashTable.swift; sourceTree = "<group>"; };
@@ -49,6 +49,8 @@
 		699718522323FCCB001DDE2D /* TokenType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenType.swift; sourceTree = "<group>"; };
 		6997185423240359001DDE2D /* testStringStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testStringStream.swift; sourceTree = "<group>"; };
 		6997185623241FBC001DDE2D /* testTokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testTokenizer.swift; sourceTree = "<group>"; };
+		69E4BD7B232AB5920006200C /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
+		69E4BD7D232AB5DC0006200C /* NodePool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodePool.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,7 +86,8 @@
 				6917481B2322620D00FCF18F /* main.swift */,
 				6917482423226DDF00FCF18F /* HashTable.swift */,
 				69971845232315A6001DDE2D /* Interpreter.swift */,
-				6917482223226DCD00FCF18F /* NodeArray.swift */,
+				69E4BD7B232AB5920006200C /* Node.swift */,
+				69E4BD7D232AB5DC0006200C /* NodePool.swift */,
 				699718502323FC34001DDE2D /* StringStream.swift */,
 				6997184E2323FA89001DDE2D /* Token.swift */,
 				6997184C2323DE2E001DDE2D /* Tokenizer.swift */,
@@ -175,7 +178,8 @@
 				6997184D2323DE2E001DDE2D /* Tokenizer.swift in Sources */,
 				6997185723241FBC001DDE2D /* testTokenizer.swift in Sources */,
 				6917482523226DDF00FCF18F /* HashTable.swift in Sources */,
-				6917482323226DCD00FCF18F /* NodeArray.swift in Sources */,
+				69E4BD7E232AB5DC0006200C /* NodePool.swift in Sources */,
+				69E4BD7C232AB5920006200C /* Node.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -17,7 +17,7 @@ final class Interpreter {
   }
 
   private lazy var tokenizer = Tokenizer()
-  private var nodeArray = NodeArray()
+  private var nodePool = NodePool(capacity: 30)
   private var symbolTable = HashTable<String, Int>(size: 997)
 
 
@@ -43,6 +43,12 @@ extension Interpreter {
       let rootNodeIndex = read()
       print(rootNodeIndex, startList: true)
 
+      if rootNodeIndex > 0 {
+        nodePool.deallocate(at: rootNodeIndex)
+      }
+
+      assert(nodePool.isEmpty, "Node Pool should be empty!")
+      
       if tokenizer.stream.isAtEnd {
         tokenizer.stream.flush()
         Swift.print()
@@ -98,23 +104,24 @@ private extension Interpreter {
       else { fatalError("symbolTable is full") }
 
       // Allocate a new node, and set `currentNodeIndex` as the index of it.
-      nodeArray.append(.zero)
+      let index = nodePool.allocate()
       if isRootNode {
-        rootNodeIndex = nodeArray.count
+        rootNodeIndex = index
         isRootNode = false
       } else {
-        nodeArray[currentNodeIndex - 1].right = nodeArray.count
+        nodePool.get(at: currentNodeIndex).right = index
       }
-      currentNodeIndex = nodeArray.count
+      currentNodeIndex = index
 
       // If the token is a left perenthesis, recursively set `left` of the node
       // and put it back, since `read` begins parsing from a left parenthesis;
       // Otherwise set `left` as a negative hash value.
+      let currentNode = nodePool.get(at: currentNodeIndex)
       if token.isEqual(to: Parenthesis.left) {
         tokenizer.putBack()
-        nodeArray[currentNodeIndex - 1].left = read()
+        currentNode.left = read()
       } else {
-        nodeArray[currentNodeIndex - 1].left = -tokenHashValue
+        currentNode.left = -tokenHashValue
       }
     }
     return rootNodeIndex
@@ -136,10 +143,11 @@ private extension Interpreter {
     } else if rootNodeIndex > 0 {
       if startList { output("( ") }
 
-      print(nodeArray[rootNodeIndex - 1].left, startList: true)
+      let currentNode = nodePool.get(at: rootNodeIndex)
+      print(currentNode.left, startList: true)
 
-      if nodeArray[rootNodeIndex - 1].right != 0 {
-        print(nodeArray[rootNodeIndex - 1].right, startList: false)
+      if currentNode.right != 0 {
+        print(currentNode.right, startList: false)
       } else {
         output(") ")
       }
